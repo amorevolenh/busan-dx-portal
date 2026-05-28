@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>부산 AI·DX 지원사업 문의 포털</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --page-bg: #ffffff;
+      --subtle-bg: #f8fafc;
+      --blue: #1e40af;
+      --blue-hover: #1e3a8a;
+      --sky: #0ea5e9;
+      --slate-950: #020617;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --green-bg: #ecfdf5;
+      --green-border: #86efac;
+      --green-text: #166534;
+      --red-bg: #fef2f2;
+      --red-border: #fca5a5;
+      --red-text: #b91c1c;
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page-bg);
+      color: var(--slate-900);
+      font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .site-header {
+      border-bottom: 1px solid var(--slate-200);
+      background: var(--subtle-bg);
+    }
+
+    .wrap {
+      width: min(100% - 40px, 1024px);
+      margin: 0 auto;
+    }
+
+    .header-inner {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      padding: 34px 0 32px;
+    }
+
+    .header-bar {
+      width: 8px;
+      align-self: stretch;
+      min-height: 78px;
+      border-radius: 8px;
+      background: var(--blue);
+      flex: 0 0 auto;
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      color: var(--slate-950);
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1.25;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .header-copy {
+      margin-top: 8px;
+      color: var(--slate-600);
+      font-size: 16px;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    main {
+      padding: 24px 0 48px;
+    }
+
+    .inquiry-form-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .section-title {
+      color: var(--slate-950);
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .section-copy {
+      margin-top: 4px;
+      color: var(--slate-600);
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .inquiry-form {
+      margin-top: 22px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--slate-700);
+      font-weight: 700;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--slate-300);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--slate-900);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    select,
+    input {
+      height: 44px;
+      padding: 0 12px;
+    }
+
+    textarea {
+      min-height: 132px;
+      resize: vertical;
+      padding: 11px 12px;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 44px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      padding: 0 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.24);
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-hover);
+    }
+
+    .btn-secondary {
+      border-color: var(--slate-300);
+      background: #fff;
+      color: var(--slate-700);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--sky);
+      color: var(--blue);
+    }
+
+    .inquiry-list-section {
+      margin-top: 16px;
+      border-radius: 8px;
+      background: var(--subtle-bg);
+      padding: 24px;
+    }
+
+    .list-header {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .list-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .count-badge {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      border: 1px solid #bae6fd;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--blue);
+      font-weight: 800;
+      padding: 0 14px;
+      white-space: nowrap;
+    }
+
+    .status {
+      display: none;
+      margin-bottom: 16px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .status.success {
+      display: block;
+      border-color: var(--green-border);
+      background: var(--green-bg);
+      color: var(--green-text);
+    }
+
+    .status.error {
+      display: block;
+      border-color: var(--red-border);
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .inquiry-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .inquiry-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .card-top {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .card-main {
+      min-width: 0;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      background: #e0f2fe;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.25;
+      padding: 5px 9px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .author-time {
+      color: var(--slate-500);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .inquiry-title {
+      margin-top: 9px;
+      color: var(--slate-950);
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      word-break: keep-all;
+    }
+
+    .inquiry-content {
+      margin-top: 8px;
+      color: var(--slate-600);
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .delete-btn {
+      min-height: 36px;
+      border: 1px solid var(--slate-300);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--slate-500);
+      font-weight: 800;
+      padding: 0 12px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    .delete-btn:hover {
+      border-color: var(--red-border);
+      background: var(--red-bg);
+      color: var(--red-text);
+    }
+
+    .delete-btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.24);
+    }
+
+    .empty-state {
+      display: none;
+      border: 1px dashed var(--slate-300);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--slate-500);
+      padding: 24px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 720px) {
+      .header-inner {
+        align-items: flex-start;
+        padding: 28px 0 26px;
+      }
+
+      .header-bar {
+        min-height: 92px;
+      }
+
+      .inquiry-form-card,
+      .inquiry-list-section {
+        padding: 20px;
+      }
+
+      .field-grid,
+      .list-header {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .list-tools,
+      .form-actions {
+        justify-content: stretch;
+      }
+
+      .list-tools .btn,
+      .form-actions .btn,
+      .count-badge {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .card-top {
+        flex-wrap: wrap;
+      }
+
+      .delete-btn {
+        margin-left: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="header-bar" aria-hidden="true"></div>
+      <div>
+        <h1>부산 AI·DX 지원사업 문의 포털</h1>
+        <p class="header-copy">지역기업·시민 누구나 부산정보산업진흥원의 지원사업에 문의할 수 있는 창구입니다.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="inquiry-form-card" aria-labelledby="form-title">
+      <h2 id="form-title" class="section-title">문의 작성</h2>
+      <p class="section-copy">지원사업 담당자가 확인할 수 있도록 필요한 내용을 남겨주세요.</p>
+
+      <form id="inquiryForm" class="inquiry-form">
+        <div class="field-grid">
+          <div>
+            <label for="category">카테고리</label>
+            <select id="category" name="category">
+              <option>AI·DX 솔루션 도입</option>
+              <option>데이터·클라우드 바우처</option>
+              <option>교육·인재양성 신청</option>
+              <option>스타트업 입주·창업</option>
+              <option>게임·콘텐츠 제작 지원</option>
+              <option>해외진출</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div>
+            <label for="author">이름</label>
+            <input id="author" name="author" type="text" placeholder="홍길동" required>
+          </div>
+        </div>
+
+        <div>
+          <label for="title">제목</label>
+          <input id="title" name="title" type="text" placeholder="문의 제목을 입력하세요" required>
+        </div>
+
+        <div>
+          <label for="content">내용</label>
+          <textarea id="content" name="content" placeholder="문의 내용을 입력하세요" required></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">등록하기</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="inquiry-list-section" aria-labelledby="list-title">
+      <div class="list-header">
+        <div>
+          <h2 id="list-title" class="section-title">문의 목록</h2>
+          <p class="section-copy">최근 등록된 문의가 먼저 표시됩니다.</p>
+        </div>
+        <div class="list-tools">
+          <button id="importButton" type="button" class="btn btn-secondary">엑셀 가져오기</button>
+          <button id="exportButton" type="button" class="btn btn-primary">엑셀 내보내기</button>
+          <span id="countBadge" class="count-badge">총 5건</span>
+        </div>
+      </div>
+
+      <input id="fileInput" class="sr-only" type="file" accept=".xlsx,.xls,.csv">
+      <div id="statusMessage" class="status" role="status" aria-live="polite"></div>
+      <div id="inquiryList" class="inquiry-list"></div>
+      <div id="emptyState" class="empty-state">등록된 문의가 없습니다.</div>
+    </section>
+  </main>
+
+  <script>
+    const CATEGORIES = [
+      "AI·DX 솔루션 도입",
+      "데이터·클라우드 바우처",
+      "교육·인재양성 신청",
+      "스타트업 입주·창업",
+      "게임·콘텐츠 제작 지원",
+      "해외진출",
+      "기타"
+    ];
+
+    const now = Date.now();
+    let inquiries = [
+      {
+        id: makeId(),
+        category: "교육·인재양성 신청",
+        author: "정하린",
+        title: "AI 활용 교육과정 일정 안내 부탁드립니다",
+        content: "재직자 대상 AI 활용 교육과정이 있다면 개강 일정과 신청 방법을 안내받고 싶습니다.",
+        createdAt: new Date(now)
+      },
+      {
+        id: makeId(),
+        category: "게임·콘텐츠 제작 지원",
+        author: "박도윤",
+        title: "Bu:Star 게임 제작비 신청 절차",
+        content: "Bu:Star 게임 제작비 지원사업의 제출 서류와 심사 절차를 확인하고 싶습니다.",
+        createdAt: new Date(now - 3 * 60 * 1000)
+      },
+      {
+        id: makeId(),
+        category: "스타트업 입주·창업",
+        author: "김서연",
+        title: "센텀 스타트업 입주 자격 문의",
+        content: "초기 창업기업도 센텀 지역 입주 지원 프로그램에 신청할 수 있는지 궁금합니다.",
+        createdAt: new Date(now - 12 * 60 * 1000)
+      },
+      {
+        id: makeId(),
+        category: "데이터·클라우드 바우처",
+        author: "이민재",
+        title: "데이터 바우처 신청 기간이 언제인가요?",
+        content: "올해 데이터 바우처 신청 접수 기간과 부산 지역 기업 대상 상담 가능 일정을 알고 싶습니다.",
+        createdAt: new Date(now - 35 * 60 * 1000)
+      },
+      {
+        id: makeId(),
+        category: "AI·DX 솔루션 도입",
+        author: "최유나",
+        title: "AI 솔루션 실증 비용 지원 가능한가요?",
+        content: "제조 현장에 AI 품질검사 솔루션을 시범 적용하려고 합니다. 실증 비용 지원 여부를 문의드립니다.",
+        createdAt: new Date(now - 70 * 60 * 1000)
+      }
+    ];
+
+    const inquiryForm = document.querySelector("#inquiryForm");
+    const categoryInput = document.querySelector("#category");
+    const authorInput = document.querySelector("#author");
+    const titleInput = document.querySelector("#title");
+    const contentInput = document.querySelector("#content");
+    const listElement = document.querySelector("#inquiryList");
+    const countBadge = document.querySelector("#countBadge");
+    const statusMessage = document.querySelector("#statusMessage");
+    const emptyState = document.querySelector("#emptyState");
+    const importButton = document.querySelector("#importButton");
+    const exportButton = document.querySelector("#exportButton");
+    const fileInput = document.querySelector("#fileInput");
+
+    inquiryForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!inquiryForm.checkValidity()) {
+        inquiryForm.reportValidity();
+        return;
+      }
+
+      inquiries.unshift({
+        id: makeId(),
+        category: categoryInput.value,
+        author: authorInput.value.trim(),
+        title: titleInput.value.trim(),
+        content: contentInput.value.trim(),
+        createdAt: new Date()
+      });
+
+      sortInquiries();
+      renderInquiries();
+      inquiryForm.reset();
+      categoryInput.value = CATEGORIES[0];
+      titleInput.focus();
+      clearStatus();
+    });
+
+    importButton.addEventListener("click", () => {
+      fileInput.value = "";
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!window.XLSX) {
+        setStatus("error", "엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해주세요.");
+        return;
+      }
+
+      try {
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, {
+          type: "array",
+          cellDates: true
+        });
+        const firstSheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[firstSheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+          defval: "",
+          raw: false
+        });
+        const imported = rows.map(rowToInquiry).filter(Boolean);
+
+        if (imported.length === 0) {
+          setStatus("error", "가져올 수 있는 문의가 없습니다. 제목, 이름, 내용 열이 있는지 확인해주세요.");
+          return;
+        }
+
+        inquiries = imported.concat(inquiries);
+        sortInquiries();
+        renderInquiries();
+        setStatus("success", `엑셀에서 문의 ${imported.length}건을 가져왔습니다.`);
+      } catch (error) {
+        setStatus("error", "엑셀 파일을 읽는 중 문제가 발생했습니다. 파일 형식을 확인해주세요.");
+      }
+    });
+
+    exportButton.addEventListener("click", () => {
+      if (!window.XLSX) {
+        setStatus("error", "엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 다시 시도해주세요.");
+        return;
+      }
+
+      sortInquiries();
+      const rows = inquiries.map((inquiry) => ({
+        ID: inquiry.id,
+        "카테고리": inquiry.category,
+        "제목": inquiry.title,
+        "이름": inquiry.author,
+        "내용": inquiry.content,
+        "등록일": formatDateTime(inquiry.createdAt)
+      }));
+      const worksheet = XLSX.utils.json_to_sheet(rows, {
+        header: ["ID", "카테고리", "제목", "이름", "내용", "등록일"]
+      });
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "문의목록");
+      XLSX.writeFile(workbook, `busan-dx-inquiries-${formatDateOnly(new Date())}.xlsx`);
+      setStatus("success", `문의 ${inquiries.length}건을 엑셀 파일로 내보냈습니다.`);
+    });
+
+    function rowToInquiry(row) {
+      const title = getValue(row, ["title", "Title", "제목"]);
+      const author = getValue(row, ["author", "Author", "작성자", "이름"]);
+      const content = getValue(row, ["content", "Content", "내용"]);
+
+      if (!title || !author || !content) {
+        return null;
+      }
+
+      const category = getValue(row, ["category", "Category", "카테고리", "분류"]) || "기타";
+      const createdAtValue = getValue(row, ["createdAt", "Created At", "등록일", "작성일", "생성일"]);
+      const createdAt = parseCreatedAt(createdAtValue);
+
+      return {
+        id: getValue(row, ["id", "ID", "번호"]) || makeId(),
+        category: CATEGORIES.includes(category) ? category : category,
+        author,
+        title,
+        content,
+        createdAt
+      };
+    }
+
+    function getValue(row, aliases) {
+      for (const alias of aliases) {
+        if (Object.prototype.hasOwnProperty.call(row, alias)) {
+          return String(row[alias]).trim();
+        }
+      }
+      return "";
+    }
+
+    function parseCreatedAt(value) {
+      if (!value) {
+        return new Date();
+      }
+
+      const normalized = String(value).trim().replace(/\./g, "-").replace(/\//g, "-");
+      const parsed = new Date(normalized);
+      if (!Number.isNaN(parsed.getTime())) {
+        return parsed;
+      }
+
+      return new Date();
+    }
+
+    function renderInquiries() {
+      listElement.textContent = "";
+      countBadge.textContent = `총 ${inquiries.length}건`;
+      emptyState.classList.toggle("visible", inquiries.length === 0);
+
+      inquiries.forEach((inquiry) => {
+        const card = document.createElement("article");
+        card.className = "inquiry-card";
+
+        const top = document.createElement("div");
+        top.className = "card-top";
+
+        const main = document.createElement("div");
+        main.className = "card-main";
+
+        const meta = document.createElement("div");
+        meta.className = "meta-row";
+
+        const category = document.createElement("span");
+        category.className = "category-badge";
+        category.textContent = inquiry.category || "기타";
+
+        const authorTime = document.createElement("span");
+        authorTime.className = "author-time";
+        authorTime.dataset.id = inquiry.id;
+        authorTime.dataset.createdAt = inquiry.createdAt.toISOString();
+        authorTime.textContent = `${inquiry.author} · ${relativeTime(inquiry.createdAt)}`;
+
+        const title = document.createElement("h3");
+        title.className = "inquiry-title";
+        title.textContent = inquiry.title;
+
+        const content = document.createElement("p");
+        content.className = "inquiry-content";
+        content.textContent = inquiry.content;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "delete-btn";
+        deleteButton.textContent = "삭제";
+        deleteButton.addEventListener("click", () => {
+          inquiries = inquiries.filter((item) => item.id !== inquiry.id);
+          renderInquiries();
+          clearStatus();
+        });
+
+        meta.append(category, authorTime);
+        main.append(meta, title, content);
+        top.append(main, deleteButton);
+        card.append(top);
+        listElement.append(card);
+      });
+    }
+
+    function updateRelativeTimes() {
+      document.querySelectorAll(".author-time").forEach((element) => {
+        const createdAt = new Date(element.dataset.createdAt);
+        const inquiry = inquiries.find((item) => item.id === element.dataset.id);
+        if (inquiry) {
+          element.textContent = `${inquiry.author} · ${relativeTime(createdAt)}`;
+        }
+      });
+    }
+
+    function sortInquiries() {
+      inquiries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    }
+
+    function relativeTime(date) {
+      const diffSeconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+      if (diffSeconds < 60) {
+        return "방금";
+      }
+
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      if (diffMinutes < 60) {
+        return `${diffMinutes}분 전`;
+      }
+
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) {
+        return `${diffHours}시간 전`;
+      }
+
+      return `${Math.floor(diffHours / 24)}일 전`;
+    }
+
+    function setStatus(type, message) {
+      statusMessage.className = `status ${type}`;
+      statusMessage.textContent = message;
+    }
+
+    function clearStatus() {
+      statusMessage.className = "status";
+      statusMessage.textContent = "";
+    }
+
+    function makeId() {
+      if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      return `inq-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function pad(number) {
+      return String(number).padStart(2, "0");
+    }
+
+    function formatDateOnly(date) {
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+
+    function formatDateTime(date) {
+      return `${formatDateOnly(date)} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+
+    sortInquiries();
+    renderInquiries();
+    setInterval(updateRelativeTimes, 30000);
+  </script>
+</body>
+</html>
